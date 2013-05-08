@@ -74,7 +74,7 @@ module Oink
         proc_file = File.new("/proc/#{$$}/smaps")
         lines = proc_file.lines
         lines.map do |line|
-          size = line[/Size: *(\d+)/, 1] and size.to_i
+          size = line[/Rss: *(\d+)/, 1] and size.to_i
         end.compact.sum
       end
 
@@ -85,11 +85,11 @@ module Oink
 
     class ProcessStatusMemorySnapshot
       def memory
-        SystemCall.execute("ps -o vsz= -p #{$$}").stdout.to_i
+        SystemCall.execute("ps -o rss= -p #{$$}").stdout.to_i
       end
 
       def self.available?
-        SystemCall.execute("ps -o vsz= -p #{$$}").success?
+        SystemCall.execute("ps -o rss= -p #{$$}").success?
       end
     end
 
